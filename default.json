@@ -1,0 +1,87 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:best-practices",
+    "schedule:earlyMondays"
+  ],
+  "timezone": "America/Los_Angeles",
+  "labels": ["dependencies"],
+  "rangeStrategy": "pin",
+  "platformAutomerge": true,
+
+  "packageRules": [
+    {
+      "description": "Group React packages",
+      "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"],
+      "groupName": "react"
+    },
+    {
+      "description": "Group ESLint packages",
+      "matchPackageNames": ["eslint", "eslint-config-next"],
+      "groupName": "eslint"
+    },
+    {
+      "description": "Group Vercel platform packages",
+      "matchPackageNames": ["@vercel/*", "vercel"],
+      "groupName": "vercel"
+    },
+
+    {
+      "description": "Auto-merge patch updates for production deps",
+      "matchDepTypes": ["dependencies"],
+      "matchUpdateTypes": ["patch"],
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
+      "description": "Auto-merge patch + minor updates for dev deps",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
+      "description": "Auto-merge lock file maintenance",
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
+      "description": "Auto-merge pin operations",
+      "matchUpdateTypes": ["pin"],
+      "automerge": true,
+      "automergeType": "branch"
+    },
+
+    {
+      "description": "Require dashboard approval for major updates",
+      "matchUpdateTypes": ["major"],
+      "automerge": false,
+      "dependencyDashboardApproval": true,
+      "labels": ["dependencies", "major"]
+    },
+    {
+      "description": "Require manual review for minor updates to production deps",
+      "matchDepTypes": ["dependencies"],
+      "matchUpdateTypes": ["minor"],
+      "automerge": false
+    },
+
+    {
+      "description": "Next.js needs extra soak time",
+      "matchPackageNames": ["next", "eslint-config-next"],
+      "minimumReleaseAge": "7 days"
+    },
+    {
+      "description": "React needs extra soak time",
+      "matchPackageNames": ["react", "react-dom"],
+      "minimumReleaseAge": "7 days"
+    },
+
+    {
+      "description": "TypeScript does not follow semver — pin exact version",
+      "matchPackageNames": ["typescript"],
+      "rangeStrategy": "pin"
+    }
+  ]
+}
