@@ -7,7 +7,7 @@
   "timezone": "America/Los_Angeles",
   "labels": ["dependencies"],
   "rangeStrategy": "pin",
-  "platformAutomerge": true,
+  "platformAutomerge": false,
 
   "packageRules": [
     {
