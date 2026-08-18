@@ -9,6 +9,19 @@
   "rangeStrategy": "pin",
   "platformAutomerge": false,
 
+  "description": [
+    "Every automerge rule below deliberately leaves automergeType at its default, 'pr'.",
+    "Do not set it to 'branch'. A branch automerge pushes a Renovate branch with NO pull",
+    "request, and a repo whose required status checks trigger on `pull_request` therefore",
+    "never reports them on that branch — so branch protection can never be satisfied and",
+    "the update rebases nightly, forever. nicgpt lost six branches this way for up to 83",
+    "days (renovate/react, renovate/lock-file-maintenance, renovate/provider-runtime,",
+    "renovate/nextjs-monorepo, renovate/postcss-8.x, renovate/vitest), and the tell was",
+    "the dashboard's 'Pending Branch Automerge' section rather than any failure anywhere.",
+    "With 'pr', Renovate merges the PR itself once the branch is green, which works on",
+    "protected and unprotected repos alike — platformAutomerge stays off, see its commit."
+  ],
+
   "packageRules": [
     {
       "description": "Group React packages",
@@ -27,30 +40,26 @@
     },
 
     {
-      "description": "Auto-merge patch updates for production deps",
+      "description": "Auto-merge patch updates for production deps (via PR — see top-level description)",
       "matchDepTypes": ["dependencies"],
       "matchUpdateTypes": ["patch"],
-      "automerge": true,
-      "automergeType": "branch"
+      "automerge": true
     },
     {
-      "description": "Auto-merge patch + minor updates for dev deps",
+      "description": "Auto-merge patch + minor updates for dev deps (via PR — see top-level description)",
       "matchDepTypes": ["devDependencies"],
       "matchUpdateTypes": ["minor", "patch"],
-      "automerge": true,
-      "automergeType": "branch"
+      "automerge": true
     },
     {
-      "description": "Auto-merge lock file maintenance",
+      "description": "Auto-merge lock file maintenance (via PR — see top-level description)",
       "matchUpdateTypes": ["lockFileMaintenance"],
-      "automerge": true,
-      "automergeType": "branch"
+      "automerge": true
     },
     {
-      "description": "Auto-merge pin operations",
+      "description": "Auto-merge pin operations (via PR — see top-level description)",
       "matchUpdateTypes": ["pin"],
-      "automerge": true,
-      "automergeType": "branch"
+      "automerge": true
     },
 
     {
