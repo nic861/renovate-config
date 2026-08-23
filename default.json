@@ -22,6 +22,24 @@
     "protected and unprotected repos alike — platformAutomerge stays off, see its commit."
   ],
 
+  "vulnerabilityAlerts": {
+    "description": [
+      "The security fast-path. Until 2026-08-22 there was none: GitHub vulnerability",
+      "alerts were DISABLED on all 11 repos, so Renovate had no data source and could",
+      "not raise a security PR at all. A CVE therefore waited for the Monday window like",
+      "a cosmetic bump, and the nine `next` CVEs were fixed by a hand-rolled branch.",
+      "Alerts were enabled on all 11 repos on 2026-08-22; this block says what happens next.",
+      "schedule + minimumReleaseAge are overridden HERE deliberately: the Monday window and",
+      "the 7-day soak on next/react are right for routine bumps and wrong for a live CVE."
+    ],
+    "enabled": true,
+    "schedule": ["at any time"],
+    "minimumReleaseAge": null,
+    "dependencyDashboardApproval": false,
+    "automerge": true,
+    "labels": ["dependencies", "security"]
+  },
+
   "packageRules": [
     {
       "description": "Group React packages",
@@ -68,6 +86,19 @@
       "automerge": false,
       "dependencyDashboardApproval": true,
       "labels": ["dependencies", "major"]
+    },
+    {
+      "description": [
+        "GitHub Actions majors auto-merge on ci. Overrides the blanket major rule above",
+        "(later packageRules win), restoring EDR-0062 §6's tiering — 'dev/tooling/actions",
+        "-> auto-merge on ci; runtime libs -> dependency-gate; majors -> human'. The blanket",
+        "rule was holding actions majors too, which the tiering never intended: an actions",
+        "bump changes the CI runner, not shipped code, and ci proves it before merge."
+      ],
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["major"],
+      "automerge": true,
+      "dependencyDashboardApproval": false
     },
     {
       "description": "Require manual review for minor updates to production deps",
