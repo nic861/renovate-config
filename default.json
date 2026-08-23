@@ -7,6 +7,10 @@
   "timezone": "America/Los_Angeles",
   "labels": ["dependencies"],
   "rangeStrategy": "pin",
+
+  "postUpdateOptions": [
+    "gomodTidy"
+  ],
   "platformAutomerge": false,
 
   "description": [
