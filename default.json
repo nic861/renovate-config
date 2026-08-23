@@ -38,6 +38,7 @@
     ],
     "enabled": true,
     "schedule": ["at any time"],
+    "automergeSchedule": ["at any time"],
     "minimumReleaseAge": null,
     "dependencyDashboardApproval": false,
     "automerge": true,
