@@ -63,14 +63,31 @@
     },
 
     {
-      "description": "Auto-merge patch updates for production deps (via PR — see top-level description)",
-      "matchDepTypes": ["dependencies"],
-      "matchUpdateTypes": ["patch"],
-      "automerge": true
-    },
-    {
-      "description": "Auto-merge patch + minor updates for dev deps (via PR — see top-level description)",
-      "matchDepTypes": ["devDependencies"],
+      "description": [
+        "Auto-merge every minor and patch update, in every manager and every depType",
+        "(via PR — see the top-level description for why automergeType stays 'pr').",
+        "This replaces three narrower rules: 'dependencies' patch, 'devDependencies'",
+        "minor + patch, and an explicit automerge:false that held 'dependencies' minors",
+        "for manual review.",
+        "",
+        "WHY BLANKET RATHER THAN ENUMERATED. The replaced rules matched on depType, and",
+        "the only depTypes they ever named were npm's two. Everything else fell through",
+        "with no automerge rule at any level: github-actions emits 'action', 'workflow',",
+        "'uses-with', 'github-runner', 'container' and 'service'; gomod emits 'require'",
+        "and 'indirect'; npm itself also emits 'optionalDependencies', 'peerDependencies',",
+        "'engines' and 'packageManager'. That is what left el-harness #59, el-website #7,",
+        "linear-tui #15 and el-admin #194 sitting open for 8-22 days.",
+        "",
+        "AND WHY ONE RULE RATHER THAN A LONGER LIST. Renovate automerges a BRANCH only",
+        "when EVERY update on it qualifies. el-admin #194 carried an automergeable",
+        "@types/node patch next to a 'uses-with' row that matched nothing, and the one",
+        "unmatched row held the whole branch manual. Enumerating depTypes leaves that",
+        "failure exactly one unlisted depType away, forever.",
+        "",
+        "Majors are untouched — the dependencyDashboardApproval rule below still holds",
+        "them, and 'digest'/'pinDigest' are deliberately NOT auto-merged here: a moved",
+        "tag on an already-pinned SHA is the supply-chain case, not a version bump."
+      ],
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
     },
@@ -105,12 +122,6 @@
       "automerge": true,
       "dependencyDashboardApproval": false
     },
-    {
-      "description": "Require manual review for minor updates to production deps",
-      "matchDepTypes": ["dependencies"],
-      "matchUpdateTypes": ["minor"],
-      "automerge": false
-    },
 
     {
       "description": "Next.js needs extra soak time",
@@ -121,6 +132,59 @@
       "description": "React needs extra soak time",
       "matchPackageNames": ["react", "react-dom"],
       "minimumReleaseAge": "7 days"
+    },
+
+    {
+      "description": [
+        "GitHub Actions soak for three days before auto-merging, matching the npm soak",
+        "this preset already inherits. config:best-practices pulls in",
+        "security:minimumReleaseAgeNpm, and EVERY rule in that preset is scoped",
+        "matchDatasources: ['npm'] — so actions, which resolve through github-tags,",
+        "github-releases and github-digest, had no soak at all and would otherwise",
+        "auto-merge a release the same hour it is published.",
+        "",
+        "SCOPED BY matchUpdateTypes ON PURPOSE — DO NOT WIDEN IT. The inherited npm",
+        "preset carves minimumReleaseAge back to null for lockFileMaintenance, pin,",
+        "replacement, bump, lockfileUpdate and rollback, because those update types have",
+        "no release timestamp to age against. Later packageRules win, so a blanket",
+        "minimumReleaseAge added here would override those carve-outs — and the failure",
+        "is silent, not loud: internalChecksFilter defaults to 'strict' and",
+        "minimumReleaseAgeBehaviour to 'timestamp-required', so the update is marked",
+        "pending and never raised. No PR, no error, just a dashboard section.",
+        "",
+        "minimumReleaseAgeBehaviour IS SET HERE FOR THAT SAME REASON. The github-runners",
+        "datasource is a hardcoded list of runner labels and emits no releaseTimestamp",
+        "on any of them, so a runs-on bump has nothing to age against and would stall",
+        "under the default. 'timestamp-optional' lets it through with a warning while",
+        "still soaking every update that does carry a timestamp.",
+        "",
+        "Majors are out of scope deliberately: they are gated by dashboard approval, and",
+        "the actions-majors override above is left exactly as it is."
+      ],
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "minimumReleaseAge": "3 days",
+      "minimumReleaseAgeBehaviour": "timestamp-optional"
+    },
+    {
+      "description": [
+        "Restates the inherited carve-outs for the surface the rule above covers, so",
+        "that widening that rule cannot resurrect the silent stall described in it.",
+        "A no-op today — the soak above does not match these update types — and scoped",
+        "to github-actions so it cannot reach the npm soak or the next/react soaks."
+      ],
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": [
+        "lockFileMaintenance",
+        "pin",
+        "pinDigest",
+        "digest",
+        "bump",
+        "lockfileUpdate",
+        "rollback",
+        "replacement"
+      ],
+      "minimumReleaseAge": null
     },
 
     {
