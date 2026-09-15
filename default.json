@@ -34,7 +34,48 @@
       "a cosmetic bump, and the nine `next` CVEs were fixed by a hand-rolled branch.",
       "Alerts were enabled on all 11 repos on 2026-08-22; this block says what happens next.",
       "schedule + minimumReleaseAge are overridden HERE deliberately: the Monday window and",
-      "the 7-day soak on next/react are right for routine bumps and wrong for a live CVE."
+      "the 7-day soak on next/react are right for routine bumps and wrong for a live CVE.",
+      "",
+      "groupName below keeps the vitest packages in ONE security PR and leaves every other",
+      "security update exactly as it was. Ungrouping here is deliberate — one CVE per PR",
+      "lands the fix sooner — and it is only wrong for a package that pins its peers",
+      "EXACTLY, because then the ungrouped PR cannot install at all.",
+      "@vitest/coverage-v8@4.1.11 requires vitest@4.1.11: no caret, no range. When",
+      "CVE-2026-84373 hit vitest on 2026-09-10 it pulled vitest out of the group and left",
+      "@vitest/coverage-v8 behind in the ordinary one, so the pair became two PRs that each",
+      "changed only package.json. Renovate could not regenerate either lockfile, npm ci",
+      "failed ERESOLVE, and ci / baseline-rebuild-local / Vercel went red with it on",
+      "nicgpt #330 + #333, el-ifs #59 + #62, health #30 and learn #301. The CVE fix was",
+      "unlandable for five days because the PR carrying it could not merge.",
+      "",
+      "WHY A TEMPLATE AND NOT A PLAIN NAME. Renovate spreads this whole block into a",
+      "`force` object on the rule it generates per advisory (process/vulnerabilities.ts),",
+      "and config/utils.ts ends every mergeChildConfig with `{ ...config, ...config.force }`.",
+      "So whatever this block says beats every packageRule below, and the inherited default",
+      "of groupName: null is precisely what ungroups the pair. Three things that look like",
+      "fixes are not, and two of them validate clean while doing nothing:",
+      "  - a plain string here ('vitest') groups EVERY security update in every repo under",
+      "    that one name — lodash and next were seen landing on renovate/vitest;",
+      "  - a nested packageRules entry setting groupName is overwritten back to null by",
+      "    that same force object on the next merge;",
+      "  - `force` inside such a rule is globalOnly (options/index.ts:562) and is stripped",
+      "    from a repository config with a warning.",
+      "The template is what makes it narrow: it is compiled per update, so only the vitest",
+      "packages get a group name at all.",
+      "",
+      "THE ELSE BRANCH IS LOAD-BEARING — DO NOT SHORTEN IT TO ''. It reproduces Renovate's",
+      "default vulnerability branchTopic byte for byte, so every other security branch is",
+      "untouched (verified: lodash, next, @types/node, axios, @babel/core and socket.io all",
+      "keep renovate/npm-<dep>-vulnerability, with identical PR titles). An empty string",
+      "would NOT turn grouping off: branch-name.ts tests the raw template, which is always",
+      "truthy, then sets branchTopic to {{{groupSlug}}} — so every security update in the",
+      "repo would collapse onto one branch named `renovate/`.",
+      "",
+      "vitest is the only group in this preset whose peers pin to one exact version;",
+      "react-dom asks for ^19.2.0 and eslint-config-next for ^7 || ^8 || ^9, and an",
+      "ungrouped security PR for either installs fine. Extend the test below only for a",
+      "package whose peer range is a single exact version. The name it emits must stay",
+      "identical to the vitest groupName in packageRules, or the pair splits again."
     ],
     "enabled": true,
     "schedule": ["at any time"],
@@ -42,7 +83,9 @@
     "minimumReleaseAge": null,
     "dependencyDashboardApproval": false,
     "automerge": true,
-    "labels": ["dependencies", "security"]
+    "labels": ["dependencies", "security"],
+
+    "groupName": "{{#if (or (equals depName 'vitest') (containsString depName '@vitest/'))}}vitest{{else}}{{{datasource}}}-{{{depNameSanitized}}}-vulnerability{{/if}}"
   },
 
   "packageRules": [
@@ -60,6 +103,22 @@
       "description": "Group Vercel platform packages",
       "matchPackageNames": ["@vercel/*", "vercel"],
       "groupName": "vercel"
+    },
+    {
+      "description": [
+        "Group vitest packages. This name must stay identical to the one in the",
+        "vulnerabilityAlerts block above — the branch is renovate/{{groupSlug}}, so the",
+        "security update and the ordinary one share a PR only while both say 'vitest'.",
+        "Change one and you must change the other, or the pair splits again.",
+        "Without this rule the name comes from `group:monorepos` and is 'vitest monorepo',",
+        "while nicgpt's own renovate.json already calls it 'vitest'. Those two spellings",
+        "produced renovate/vitest-monorepo on el-ifs, health and learn and renovate/vitest",
+        "on nicgpt, so no single name in the block above could have rejoined the group on",
+        "all four repos. Naming it here makes the preset self-sufficient: a repo needs no",
+        "vitest rule of its own, and nicgpt's is now a duplicate that agrees."
+      ],
+      "matchPackageNames": ["vitest", "@vitest/*"],
+      "groupName": "vitest"
     },
 
     {
