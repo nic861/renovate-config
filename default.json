@@ -174,8 +174,9 @@
         "",
         "REMOVE A NAME FROM THIS LIST THE DAY ITS REPO GETS A REQUIRED CHECK, and delete",
         "matchRepositories entirely once both have one. The hold-out is about the missing",
-        "backstop, not about the repos: apart from the el-design-system ignoreTests rule",
-        "at the end, this is the only place in the preset that names a repository, and",
+        "backstop, not about the repos: apart from the quiet-repo schedule rule and the",
+        "el-design-system ignoreTests rule at the end, this is the only place in the",
+        "preset that names a repository, and",
         "every other rule below still applies to both unchanged — automerge on",
         "lockFileMaintenance and on pin included."
       ],
@@ -283,6 +284,29 @@
       "description": "TypeScript does not follow semver — pin exact version",
       "matchPackageNames": ["typescript"],
       "rangeStrategy": "pin"
+    },
+
+    {
+      "description": [
+        "dotfiles and el-design-system get the whole of Monday instead of the 4-hour",
+        "schedule:earlyMondays window (midnight-4am America/Los_Angeles). Added 2026-10-16.",
+        "For about 8 weeks Renovate opened ZERO PRs in these two repos while updates sat",
+        "under 'Awaiting Schedule' on their Dependency Dashboards. On 2026-10-16 at 11:48Z",
+        "the 'create all awaiting schedule PRs' box was ticked on dotfiles and Renovate",
+        "opened 5 PRs (#502-#506) within a minute, so the window is what blocks them.",
+        "Busier repos (linear-tui, el-harness, website, learn) do get PRs inside the window.",
+        "The likely reason is that the hosted app visits quiet repos too rarely to land",
+        "inside a 4-hour weekly slot (the dotfiles dashboard was last refreshed Monday",
+        "about 20:08 PDT, well outside it). No other repo's schedule changes.",
+        "",
+        "automergeSchedule is deliberately NOT set: nothing in this preset narrows it for",
+        "ordinary updates, so it stays at Renovate's default 'at any time' and cannot",
+        "become the new bottleneck. Security PRs are unaffected by this rule wherever it",
+        "sits: the vulnerabilityAlerts block is applied as a `force` object that beats",
+        "every packageRule (see that block), so they keep schedule 'at any time'."
+      ],
+      "matchRepositories": ["nic861/dotfiles", "nic861/el-design-system"],
+      "schedule": ["on monday"]
     },
 
     {
