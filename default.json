@@ -169,13 +169,15 @@
         "'yellow' rather than 'green' on zero checks, so the PR would sit open rather than",
         "merge — this rule stated that as policy instead of leaving it to that default.",
         "el-design-system was taken off the list on 2026-10-16 by Nic's decision, with",
-        "the zero-check situation unchanged: it now falls to that 'yellow' default.",
+        "the zero-check situation unchanged; the ignoreTests rule at the end of this list",
+        "is what lets it merge past that 'yellow' default.",
         "",
         "REMOVE A NAME FROM THIS LIST THE DAY ITS REPO GETS A REQUIRED CHECK, and delete",
         "matchRepositories entirely once both have one. The hold-out is about the missing",
-        "backstop, not about the repos: this is the only place in the preset that names a",
-        "repository, and every other rule below still applies to both unchanged — automerge",
-        "on lockFileMaintenance and on pin included."
+        "backstop, not about the repos: apart from the el-design-system ignoreTests rule",
+        "at the end, this is the only place in the preset that names a repository, and",
+        "every other rule below still applies to both unchanged — automerge on",
+        "lockFileMaintenance and on pin included."
       ],
       "matchRepositories": ["!nic861/linear-tui"],
       "matchUpdateTypes": ["minor", "patch"],
@@ -281,6 +283,23 @@
       "description": "TypeScript does not follow semver — pin exact version",
       "matchPackageNames": ["typescript"],
       "rangeStrategy": "pin"
+    },
+
+    {
+      "description": [
+        "el-design-system automerges without waiting for status checks. Nic chose this on",
+        "2026-10-16: the repo has no CI at all, so Renovate reads its branch status as",
+        "'yellow' (zero checks) and never reaches the 'green' automerge needs. Apps consume",
+        "it by vendoring files, not as a package dependency, so a bad bump there cannot",
+        "break an app's install or build on its own.",
+        "",
+        "ignoreTests ONLY skips the check wait. It does not turn automerge on: what merges",
+        "is still decided by the rules above (minor/patch, lockFileMaintenance, pin and",
+        "security updates), and majors stay behind dashboard approval. Kept LAST so no",
+        "later rule can override it. Delete it the day el-design-system gets a CI check."
+      ],
+      "matchRepositories": ["nic861/el-design-system"],
+      "ignoreTests": true
     }
   ]
 }
