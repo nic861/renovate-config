@@ -147,7 +147,7 @@
         "them, and 'digest'/'pinDigest' are deliberately NOT auto-merged here: a moved",
         "tag on an already-pinned SHA is the supply-chain case, not a version bump.",
         "",
-        "TWO REPOS ARE HELD OUT HERE, AND THE HOLD-OUT IS TEMPORARY. linear-tui and",
+        "ONE REPO IS HELD OUT HERE, AND THE HOLD-OUT IS TEMPORARY. linear-tui and",
         "el-design-system are the only two of the eleven with no REQUIRED status check:",
         "neither branch is protected at all — GET /branches/main/protection returns 404",
         "'Branch not protected' on both — where the other nine gate main on one. 'ci' on",
@@ -167,7 +167,9 @@
         "el-design-system has no .github/workflows at all and no lockfile, so neither gate",
         "has a check to read and nothing would build or test the change. Renovate returns",
         "'yellow' rather than 'green' on zero checks, so the PR would sit open rather than",
-        "merge — this rule states that as policy instead of leaving it to that default.",
+        "merge — this rule stated that as policy instead of leaving it to that default.",
+        "el-design-system was taken off the list on 2026-10-16 by Nic's decision, with",
+        "the zero-check situation unchanged: it now falls to that 'yellow' default.",
         "",
         "REMOVE A NAME FROM THIS LIST THE DAY ITS REPO GETS A REQUIRED CHECK, and delete",
         "matchRepositories entirely once both have one. The hold-out is about the missing",
@@ -175,7 +177,7 @@
         "repository, and every other rule below still applies to both unchanged — automerge",
         "on lockFileMaintenance and on pin included."
       ],
-      "matchRepositories": ["!nic861/linear-tui", "!nic861/el-design-system"],
+      "matchRepositories": ["!nic861/linear-tui"],
       "matchUpdateTypes": ["minor", "patch"],
       "automerge": true
     },
