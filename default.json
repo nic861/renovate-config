@@ -288,16 +288,22 @@
 
     {
       "description": [
-        "dotfiles and el-design-system get the whole of Monday instead of the 4-hour",
-        "schedule:earlyMondays window (midnight-4am America/Los_Angeles). Added 2026-10-16.",
-        "For about 8 weeks Renovate opened ZERO PRs in these two repos while updates sat",
+        "dotfiles, el-design-system and learn get the whole of Monday instead of the 4-hour",
+        "schedule:earlyMondays window (midnight-4am America/Los_Angeles). Rule added 2026-10-16.",
+        "For about 8 weeks Renovate opened ZERO PRs in dotfiles and el-design-system while updates sat",
         "under 'Awaiting Schedule' on their Dependency Dashboards. On 2026-10-16 at 11:48Z",
         "the 'create all awaiting schedule PRs' box was ticked on dotfiles and Renovate",
         "opened 5 PRs (#502-#506) within a minute, so the window is what blocks them.",
-        "Busier repos (linear-tui, el-harness, website, learn) do get PRs inside the window.",
+        "Busier repos (linear-tui, el-harness, website) do get PRs inside the window.",
         "The likely reason is that the hosted app visits quiet repos too rarely to land",
         "inside a 4-hour weekly slot (the dotfiles dashboard was last refreshed Monday",
         "about 20:08 PDT, well outside it). No other repo's schedule changes.",
+        "",
+        "learn joined this rule on 2026-11-01. Its last routine PR was 2026-10-12. Renovate",
+        "rewrote its dashboard at 2026-10-26T11:07:55Z, eight minutes after the window closed,",
+        "so Renovate was visiting on that Monday outside the window. That does not prove a",
+        "PR would have opened. The dashboard shows no rewrite on 2026-10-19, which settles",
+        "nothing: an edit appears only when the body changes.",
         "",
         "automergeSchedule is deliberately NOT set: nothing in this preset narrows it for",
         "ordinary updates, so it stays at Renovate's default 'at any time' and cannot",
@@ -305,7 +311,7 @@
         "sits: the vulnerabilityAlerts block is applied as a `force` object that beats",
         "every packageRule (see that block), so they keep schedule 'at any time'."
       ],
-      "matchRepositories": ["nic861/dotfiles", "nic861/el-design-system"],
+      "matchRepositories": ["nic861/dotfiles", "nic861/el-design-system", "nic861/learn"],
       "schedule": ["on monday"]
     },
 
