@@ -289,8 +289,8 @@
     {
       "description": [
         "dotfiles, el-design-system and learn get the whole of Monday instead of the 4-hour",
-        "schedule:earlyMondays window (midnight-4am America/Los_Angeles). Added 2026-10-16.",
-        "For about 8 weeks Renovate opened ZERO PRs in these two repos while updates sat",
+        "schedule:earlyMondays window (midnight-4am America/Los_Angeles). Rule added 2026-10-16.",
+        "For about 8 weeks Renovate opened ZERO PRs in dotfiles and el-design-system while updates sat",
         "under 'Awaiting Schedule' on their Dependency Dashboards. On 2026-10-16 at 11:48Z",
         "the 'create all awaiting schedule PRs' box was ticked on dotfiles and Renovate",
         "opened 5 PRs (#502-#506) within a minute, so the window is what blocks them.",
