@@ -120,6 +120,23 @@
       "matchPackageNames": ["vitest", "@vitest/*"],
       "groupName": "vitest"
     },
+    {
+      "description": [
+        "Hold @vitest/coverage-v8 at 4.1.11 for a repo still below it. GHSA-82fw-gwwq-j7x9",
+        "lists vitest but not coverage-v8, so the security path takes vitest to the LOWEST",
+        "fixed version (4.1.11) while coverage-v8 takes the ordinary path to the latest",
+        "(4.1.12). The group above keeps them in one PR but cannot keep them on one version,",
+        "and coverage-v8 peers on exactly its own vitest version, so the PR cannot install:",
+        "ERESOLVE on health #48 and el-ifs #75. Delete this rule once every repo using",
+        "vitest is at 4.1.11 or later; from that version on it matches nothing.",
+        "KNOWN-LIMITATION(GHSA-82fw-gwwq-j7x9, 2026-11-02): this covers this one advisory. A",
+        "later vitest CVE whose lowest fix is older than the latest release splits the pair",
+        "the same way."
+      ],
+      "matchPackageNames": ["@vitest/coverage-v8"],
+      "matchCurrentVersion": "< 4.1.11",
+      "allowedVersions": "4.1.11"
+    },
 
     {
       "description": [
