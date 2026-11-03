@@ -106,6 +106,18 @@
     },
     {
       "description": [
+        "Group Supabase client packages. @supabase/ssr raises its supabase-js peer floor as it",
+        "goes (0.12.7 needs ^2.114.0), so a bump of ssr alone can fail ERESOLVE: learn #385.",
+        "KNOWN-LIMITATION(group-supabase-renovate, 2026-11-02): this does not reach two cases. A",
+        "security update stays ungrouped (see vulnerabilityAlerts), and a supabase-js major",
+        "goes to renovate/major-supabase while an ssr minor stays on renovate/supabase. Either",
+        "fails the same way if the ssr version it lands on needs a newer supabase-js."
+      ],
+      "matchPackageNames": ["@supabase/ssr", "@supabase/supabase-js"],
+      "groupName": "supabase"
+    },
+    {
+      "description": [
         "Group vitest packages. This name must stay identical to the one in the",
         "vulnerabilityAlerts block above — the branch is renovate/{{groupSlug}}, so the",
         "security update and the ordinary one share a PR only while both say 'vitest'.",
