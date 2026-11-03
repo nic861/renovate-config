@@ -38,8 +38,9 @@
       "",
       "groupName below keeps the vitest packages in ONE security PR and leaves every other",
       "security update exactly as it was. Ungrouping here is deliberate — one CVE per PR",
-      "lands the fix sooner — and it is only wrong for a package that pins its peers",
-      "EXACTLY, because then the ungrouped PR cannot install at all.",
+      "lands the fix sooner — and it is wrong for a package whose new version needs a",
+      "newer peer than the repo has, because then the ungrouped PR cannot install at all.",
+      "An EXACT peer pin always does that, and it is the case this block handles.",
       "@vitest/coverage-v8@4.1.11 requires vitest@4.1.11: no caret, no range. When",
       "CVE-2026-84373 hit vitest on 2026-09-10 it pulled vitest out of the group and left",
       "@vitest/coverage-v8 behind in the ordinary one, so the pair became two PRs that each",
@@ -73,9 +74,12 @@
       "",
       "vitest is the only group in this preset whose peers pin to one exact version;",
       "react-dom asks for ^19.2.0 and eslint-config-next for ^7 || ^8 || ^9, and an",
-      "ungrouped security PR for either installs fine. Extend the test below only for a",
-      "package whose peer range is a single exact version. The name it emits must stay",
-      "identical to the vitest groupName in packageRules, or the pair splits again."
+      "ungrouped security PR for either installs fine. @supabase/ssr is a caret range too,",
+      "but it raises the floor as it goes, so its security PR installs only if the repo's",
+      "supabase-js already meets that floor (see the supabase rule below).",
+      "Extend the test below only for a package whose peer range is a single exact version.",
+      "The name it emits must stay identical to the vitest groupName in packageRules, or",
+      "the pair splits again."
     ],
     "enabled": true,
     "schedule": ["at any time"],
@@ -103,6 +107,18 @@
       "description": "Group Vercel platform packages",
       "matchPackageNames": ["@vercel/*", "vercel"],
       "groupName": "vercel"
+    },
+    {
+      "description": [
+        "Group Supabase client packages. @supabase/ssr raises its supabase-js peer floor as it",
+        "goes (0.12.7 needs ^2.114.0), so a bump of ssr alone can fail ERESOLVE: learn #385.",
+        "KNOWN-LIMITATION(group-supabase-renovate, 2026-11-02): this does not reach two cases. A",
+        "security update stays ungrouped (see vulnerabilityAlerts), and a supabase-js major",
+        "goes to renovate/major-supabase while an ssr minor stays on renovate/supabase. Either",
+        "fails the same way if the ssr version it lands on needs a newer supabase-js."
+      ],
+      "matchPackageNames": ["@supabase/ssr", "@supabase/supabase-js"],
+      "groupName": "supabase"
     },
     {
       "description": [
