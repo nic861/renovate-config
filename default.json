@@ -345,9 +345,15 @@
         "ordinary updates, so it stays at Renovate's default 'at any time' and cannot",
         "become the new bottleneck. Security PRs are unaffected by this rule wherever it",
         "sits: the vulnerabilityAlerts block is applied as a `force` object that beats",
-        "every packageRule (see that block), so they keep schedule 'at any time'."
+        "every packageRule (see that block), so they keep schedule 'at any time'.",
+        "",
+        "nicgpt joined this rule on 2026-11-12. Renovate opened exactly two PRs on each of the",
+        "five Mondays 2026-10-05 to 2026-11-02 while about 17 updates sat under 'Awaiting",
+        "Schedule', including the provider-runtime group last merged 2026-08-24 (#302). The",
+        "cause is not proven; the likely one is a single visit inside the window with a",
+        "two-PR limit per visit."
       ],
-      "matchRepositories": ["nic861/dotfiles", "nic861/el-design-system", "nic861/learn"],
+      "matchRepositories": ["nic861/dotfiles", "nic861/el-design-system", "nic861/learn", "nic861/nicgpt"],
       "schedule": ["on monday"]
     },
 
