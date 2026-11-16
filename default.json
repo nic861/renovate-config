@@ -163,6 +163,28 @@
       "constraints": { "npm": "<12" }
     },
     {
+      "description": [
+        "Lock file maintenance uses an npm below 12 for the lockfile step, in learn and health only.",
+        "It exists for the same npm 12 bug as the rule above (npm/cli#9800): lock file maintenance",
+        "regenerates the whole lockfile, so it hits the same EALLOWREMOTE refusal, and the rule",
+        "above does not apply because it matches by package name.",
+        "Evidence, 2026-11-16: regenerating a lockfile from package.json alone failed with npm",
+        "12.2.2 (EALLOWREMOTE, naming @tailwindcss/oxide-wasm32-wasi) in both repos, and",
+        "succeeded with npm 11.21.2.",
+        "THIS NAMES TWO REPOSITORIES ON PURPOSE, for the reason given in the rule above: an npm",
+        "below 12 does not refuse URL or git sources when it writes a lockfile, and only learn and",
+        "health have the CI install step that refuses them. To add a repository, give it the same",
+        "CI install step first, then add it to the list.",
+        "This sets no automerge, schedule, groupName or groupSlug: those stay with the rules that",
+        "already govern lock file maintenance.",
+        "To remove: delete this rule together with the rule above once npm ships the fix for",
+        "npm/cli#9800."
+      ],
+      "matchRepositories": ["nic861/learn", "nic861/health"],
+      "matchUpdateTypes": ["lockFileMaintenance"],
+      "constraints": { "npm": "<12" }
+    },
+    {
       "description": "Group React packages",
       "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"],
       "groupName": "react"
