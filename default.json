@@ -122,6 +122,22 @@
       "groupName": "all non-major dependencies"
     },
     {
+      "description": [
+        "Tailwind minor and patch updates keep their own PR instead of joining the grouped one",
+        "above. @tailwindcss/oxide-wasm32-wasi bundles its own dependencies, so the lockfile",
+        "update has to download its tarball, and a run that refuses remote fetches fails the",
+        "'renovate/artifacts' check with package.json changed and the lockfile not. In the",
+        "grouped PR that one failure would hold every other routine update. The name is the one",
+        "config:recommended (group:tailwindcssMonorepo) gave before the grouped rule existed,",
+        "so the branch is again renovate/tailwindcss-monorepo. Majors are not matched and keep",
+        "that preset's behaviour. Delete this rule once the Tailwind lockfile update works",
+        "again; the packages then join the grouped PR. No groupSlug, for the reason given above."
+      ],
+      "matchPackageNames": ["tailwindcss", "@tailwindcss/*"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "tailwindcss monorepo"
+    },
+    {
       "description": "Group React packages",
       "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"],
       "groupName": "react"
