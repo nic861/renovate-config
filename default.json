@@ -12,6 +12,9 @@
     "gomodTidy"
   ],
   "platformAutomerge": false,
+  "constraints": {
+    "npm": "<12"
+  },
 
   "description": [
     "Every automerge rule below deliberately leaves automergeType at its default, 'pr'.",
@@ -23,7 +26,17 @@
     "renovate/nextjs-monorepo, renovate/postcss-8.x, renovate/vitest), and the tell was",
     "the dashboard's 'Pending Branch Automerge' section rather than any failure anywhere.",
     "With 'pr', Renovate merges the PR itself once the branch is green, which works on",
-    "protected and unprotected repos alike — platformAutomerge stays off, see its commit."
+    "protected and unprotected repos alike — platformAutomerge stays off, see its commit.",
+    "",
+    "constraints.npm '<12' makes Renovate run npm 11 or older for its lockfile steps. npm 12",
+    "defaults allow-remote to 'none', and its lockfile-only path wrongly treats the registry",
+    "tarball of a package with bundleDependencies as a remote URL and refuses it with",
+    "EALLOWREMOTE (npm/cli#9800). @tailwindcss/oxide-wasm32-wasi is such a package, so every",
+    "Tailwind 4 update fails its lockfile step. The repos' own CI runs the npm that ships",
+    "with Node 22 or 24 (npm 10 or 11), not npm 12, so this gives up nothing they have.",
+    "A repo's own packageManager field or lockfileVersion 1 or 2 detection takes precedence",
+    "over this value. REMOVE IT once npm ships the fix: watch npm/cli#9800, whose fix PRs",
+    "are #9818 and #9819. The Tailwind rule below can go at the same time."
   ],
 
   "vulnerabilityAlerts": {
@@ -124,12 +137,12 @@
     {
       "description": [
         "Tailwind minor and patch updates keep their own PR instead of joining the grouped one",
-        "above. OBSERVED: the lockfile update for these packages fails the 'renovate/artifacts'",
-        "check with npm error EALLOWREMOTE (refusing to fetch the @tailwindcss/oxide-wasm32-wasi",
-        "tarball), leaving package.json changed and the lockfile not. SUSPECTED, NOT CONFIRMED:",
-        "that package bundles its own dependencies, so npm has to download its tarball, and the",
-        "run where Renovate executes npm refuses remote fetches. Whatever the cause, in the",
-        "grouped PR that one failure would hold every other routine update. The name is the one",
+        "above. KNOWN CAUSE: the lockfile update for these packages fails the 'renovate/artifacts'",
+        "check with npm error EALLOWREMOTE, leaving package.json changed and the lockfile not.",
+        "npm 12 refuses the registry tarball of @tailwindcss/oxide-wasm32-wasi because that",
+        "package has bundleDependencies (npm/cli#9800); the constraints.npm setting at the top",
+        "of this file is the fix being tried. Until it works, in the grouped PR that one failure",
+        "would hold every other routine update. The name is the one",
         "config:recommended (group:tailwindcssMonorepo) gave before the grouped rule existed,",
         "so the branch is again renovate/tailwindcss-monorepo. Majors are not matched and keep",
         "that preset's behaviour. Delete this rule once the Tailwind lockfile update works",
