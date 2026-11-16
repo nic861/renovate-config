@@ -124,12 +124,13 @@
     {
       "description": [
         "Tailwind minor and patch updates keep their own PR instead of joining the grouped one",
-        "above. OBSERVED: the lockfile update for these packages fails the 'renovate/artifacts'",
-        "check with npm error EALLOWREMOTE (refusing to fetch the @tailwindcss/oxide-wasm32-wasi",
-        "tarball), leaving package.json changed and the lockfile not. SUSPECTED, NOT CONFIRMED:",
-        "that package bundles its own dependencies, so npm has to download its tarball, and the",
-        "run where Renovate executes npm refuses remote fetches. Whatever the cause, in the",
-        "grouped PR that one failure would hold every other routine update. The name is the one",
+        "above. The lockfile update for these packages fails the 'renovate/artifacts' check with",
+        "npm error EALLOWREMOTE, leaving package.json changed and the lockfile not. The cause is",
+        "known: the hosted Renovate app writes lockfiles with npm 12, and npm 12 refuses the",
+        "registry tarball of any package that declares bundleDependencies (npm/cli#9800, still",
+        "open; fixes in #9818 and #9819 are not merged; newest npm 12 is 12.2.2).",
+        "@tailwindcss/oxide-wasm32-wasi declares them. In the grouped PR that one failure would",
+        "hold every other routine update, so these keep their own. The name is the one",
         "config:recommended (group:tailwindcssMonorepo) gave before the grouped rule existed,",
         "so the branch is again renovate/tailwindcss-monorepo. Majors are not matched and keep",
         "that preset's behaviour. Delete this rule once the Tailwind lockfile update works",
@@ -138,6 +139,28 @@
       "matchPackageNames": ["tailwindcss", "@tailwindcss/*"],
       "matchUpdateTypes": ["minor", "patch"],
       "groupName": "tailwindcss monorepo"
+    },
+    {
+      "description": [
+        "Tailwind packages use an npm below 12 for the lockfile step, in learn and health only.",
+        "That avoids the npm 12 EALLOWREMOTE failure described in the rule above (npm/cli#9800).",
+        "Majors are included: there is no matchUpdateTypes here.",
+        "THIS NAMES TWO REPOSITORIES ON PURPOSE. An npm below 12 does not refuse dependencies",
+        "from URL or git sources when it writes a lockfile. learn and health install in CI with",
+        "npm 12.2.2 and an env block that sets allow-remote, allow-git, allow-file and",
+        "allow-directory to none and fixes the registry (learn #426, health #59), so a",
+        "non-registry source written into a lockfile is refused in CI before the update can merge.",
+        "Other repos have no such step and must not get this rule.",
+        "The tradeoff: for these packages in these two repos, Renovate's lockfile step runs an npm",
+        "that does not itself refuse URL or git sources. The CI install step is what refuses them.",
+        "To add a repository, give it the same CI install step first, then add it to the list.",
+        "To remove: once npm ships the fix for npm/cli#9800, delete this rule. Then, when Tailwind",
+        "updates pass in the grouped pull request, the 'tailwindcss monorepo' rule can go too.",
+        "No groupName and no groupSlug: grouping is decided by the rule above."
+      ],
+      "matchRepositories": ["nic861/learn", "nic861/health"],
+      "matchPackageNames": ["tailwindcss", "@tailwindcss/*"],
+      "constraints": { "npm": "<12" }
     },
     {
       "description": "Group React packages",
