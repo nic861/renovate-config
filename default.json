@@ -94,6 +94,34 @@
 
   "packageRules": [
     {
+      "description": [
+        "Group routine minor and patch updates into ONE pull request per repo, so a merge to",
+        "main leaves one open Renovate PR to rebase instead of one per package. FIRST in this",
+        "list on purpose: later rules win, so every named group below (react, eslint, vercel,",
+        "supabase, vitest) and any repo's own groupName still beats this one for its packages.",
+        "",
+        "THERE IS DELIBERATELY NO groupSlug HERE. Renovate derives a branch name from the slug",
+        "when one is set and from groupName when it is not. A slug set on this rule would NOT",
+        "be cleared by the later rules, which set only groupName, so every named group and",
+        "every security fix would keep this rule's slug and land on this rule's branch.",
+        "With groupName alone each group's branch comes from its own name.",
+        "",
+        "matchManagers IS A POSITIVE LIST, NOT 'everything except github-actions', because the",
+        "docs give matchManagers no negation syntax. It leaves out github-actions (action code",
+        "runs with repository access and soaks 3 days, so each stays in its own PR where a bad",
+        "one is easy to see), nvm and custom managers. A manager not listed keeps its",
+        "old behaviour; add it here to group it. majors, pin, pinDigest, digest and",
+        "lockFileMaintenance are not matched. Security updates are not grouped by this rule:",
+        "vulnerabilityAlerts above is applied as `force` and beats every packageRule.",
+        "",
+        "The cost: one failing package holds every other update in that PR until fixed.",
+        "Delete this rule to undo it; the next Renovate run goes back to one PR per package."
+      ],
+      "matchManagers": ["npm", "pip_requirements", "gomod"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "groupName": "all non-major dependencies"
+    },
+    {
       "description": "Group React packages",
       "matchPackageNames": ["react", "react-dom", "@types/react", "@types/react-dom"],
       "groupName": "react"
