@@ -124,9 +124,11 @@
     {
       "description": [
         "Tailwind minor and patch updates keep their own PR instead of joining the grouped one",
-        "above. @tailwindcss/oxide-wasm32-wasi bundles its own dependencies, so the lockfile",
-        "update has to download its tarball, and a run that refuses remote fetches fails the",
-        "'renovate/artifacts' check with package.json changed and the lockfile not. In the",
+        "above. OBSERVED: the lockfile update for these packages fails the 'renovate/artifacts'",
+        "check with npm error EALLOWREMOTE (refusing to fetch the @tailwindcss/oxide-wasm32-wasi",
+        "tarball), leaving package.json changed and the lockfile not. SUSPECTED, NOT CONFIRMED:",
+        "that package bundles its own dependencies, so npm has to download its tarball, and the",
+        "run where Renovate executes npm refuses remote fetches. Whatever the cause, in the",
         "grouped PR that one failure would hold every other routine update. The name is the one",
         "config:recommended (group:tailwindcssMonorepo) gave before the grouped rule existed,",
         "so the branch is again renovate/tailwindcss-monorepo. Majors are not matched and keep",
