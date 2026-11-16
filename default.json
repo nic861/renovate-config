@@ -123,20 +123,32 @@
     },
     {
       "description": [
-        "Tailwind minor and patch updates keep their own PR instead of joining the grouped one",
-        "above. OBSERVED: the lockfile update for these packages fails the 'renovate/artifacts'",
-        "check with npm error EALLOWREMOTE (refusing to fetch the @tailwindcss/oxide-wasm32-wasi",
-        "tarball), leaving package.json changed and the lockfile not. SUSPECTED, NOT CONFIRMED:",
-        "that package bundles its own dependencies, so npm has to download its tarball, and the",
-        "run where Renovate executes npm refuses remote fetches. Whatever the cause, in the",
-        "grouped PR that one failure would hold every other routine update. The name is the one",
-        "config:recommended (group:tailwindcssMonorepo) gave before the grouped rule existed,",
-        "so the branch is again renovate/tailwindcss-monorepo. Majors are not matched and keep",
-        "that preset's behaviour. Delete this rule once the Tailwind lockfile update works",
-        "again; the packages then join the grouped PR. No groupSlug, for the reason given above."
+        "Tailwind minor and patch updates get their own PR, and Renovate runs npm below 12 for",
+        "that PR's lockfile step. The name is the one config:recommended (group:tailwindcssMonorepo)",
+        "gave before the grouped rule above existed, so the branch is again",
+        "renovate/tailwindcss-monorepo. Majors are not matched and keep that preset's behaviour.",
+        "No groupSlug, for the reason given in the grouped rule above.",
+        "",
+        "KNOWN CAUSE. npm 12 defaults allow-remote to 'none', and its lockfile-only path wrongly",
+        "treats the registry tarball of a package with bundleDependencies as a remote URL and",
+        "refuses it with EALLOWREMOTE (npm/cli#9800). @tailwindcss/oxide-wasm32-wasi is such a",
+        "package, so on npm 12 every Tailwind 4 update fails the 'renovate/artifacts' check,",
+        "leaving package.json changed and the lockfile not. Left in the grouped PR, that one",
+        "failure would hold every other routine update.",
+        "",
+        "TRADEOFF. For these packages only, Renovate's lockfile step runs an npm that does NOT",
+        "refuse URL-tarball or git sources. That is the same as bumping them by hand on npm 11.",
+        "Every other update keeps npm 12 and its refusal. The constraint is therefore set here",
+        "and deliberately not at the top level of this file.",
+        "",
+        "REMOVAL. Once npm ships the fix (watch npm/cli#9800; fix PRs #9818 and #9819), delete",
+        "the constraints key and then this whole rule. The packages then join the grouped PR."
       ],
       "matchPackageNames": ["tailwindcss", "@tailwindcss/*"],
       "matchUpdateTypes": ["minor", "patch"],
+      "constraints": {
+        "npm": "<12"
+      },
       "groupName": "tailwindcss monorepo"
     },
     {
